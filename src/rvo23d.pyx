@@ -21,6 +21,10 @@ cdef extern from "RVOSimulator.h" namespace "RVO":
         Vector3 point
         Vector3 direction
 
+cdef extern from "RVOSimulator.h" namespace "RVO":
+    cdef cppclass Plane:
+        Vector3 point
+        Vector3 normal
 
 cdef extern from "RVOSimulator.h" namespace "RVO":
     cdef cppclass RVOSimulator:
@@ -41,6 +45,8 @@ cdef extern from "RVOSimulator.h" namespace "RVO":
         size_t getAgentNumAgentNeighbors(size_t agentNo) const
         const Vector3 & getAgentPosition(size_t agentNo) const
         const Vector3 & getAgentPrefVelocity(size_t agentNo) const
+        size_t getAgentNumORCAPlanes(size_t agentNo) const;
+        const Plane &getAgentORCAPlane(size_t agentNo, size_t planeNo) const;
         float getAgentRadius(size_t agentNo) const
         float getAgentTimeHorizon(size_t agentNo) const
         const Vector3 & getAgentVelocity(size_t agentNo) const
@@ -129,6 +135,11 @@ cdef class PyRVOSimulator:
     def getAgentVelocity(self, size_t agent_no):
         cdef Vector3 velocity = self.thisptr.getAgentVelocity(agent_no)
         return velocity.x(), velocity.y(), velocity.z()
+    def getAgentNumORCAPlanes(self,size_t agentNo):
+        return self.thisptr.getAgentNumORCAPlanes(agentNo)
+    def getAgentORCAPlane(self, size_t agentNo, size_t planeNo):
+        plane = self.thisptr.getAgentORCAPlane(agentNo,planeNo)
+        return plane.point.x(), plane.point.y(), plane.point.z(), plane.normal.x(), plane.normal.y(), plane.normal.z()
     def getGlobalTime(self):
         return self.thisptr.getGlobalTime()
     def getNumAgents(self):
